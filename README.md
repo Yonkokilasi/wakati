@@ -1,16 +1,15 @@
-# wakati_clock
+# Flutter Clock
 
-A flutter clock face UI 
+Welcome to Flutter Clock!
 
-## Getting Started
+See [flutter.dev/clock](https://flutter.dev/clock) for how to get started, submission requirements, contest rules, and FAQs.
 
-This project is a starting point for a Flutter application.
+See a [live demo](https://maryx.github.io/flutter_clock) with Flutter for Web!
 
-A few resources to get you started if this is your first Flutter project:
+Example [Analog Clock](analog_clock)
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+<img src='analog_clock/analog.gif' width='350'>
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Example [Digital Clock](digital_clock)
+
+<img src='digital_clock/digital.gif' width='350'>

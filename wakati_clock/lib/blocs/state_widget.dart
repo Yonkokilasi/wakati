@@ -41,6 +41,11 @@ class StateWidgetState extends State<StateWidget> {
     } else {
       state = new StateModel();
     }
+    startClock();
+  }
+
+  void startClock() {
+    state.updateTime();
   }
 
   @override

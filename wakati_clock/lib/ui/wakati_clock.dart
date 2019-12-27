@@ -17,14 +17,14 @@ class _WakatiState extends State<WakatiClock> {
   Widget build(BuildContext context) {
     print("********* build method");
     var provider = Provider.of<StateModel>(context);
-    // final hour = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
-    //     .format(provider.currentTime);
+    final hour = DateFormat(widget.model.is24HourFormat ? 'HH' : 'hh')
+        .format(provider.currentTime);
     final minute = DateFormat('mm').format(provider.currentTime);
     final seconds = provider.second;
     return Container(
         child: Column(
       children: <Widget>[
-        Text("here we are ${provider.number}"),
+        Text("here we are ${provider.second}"),
         MaterialButton(
           child: Text("Set to 3"),
           color: Colors.red,
@@ -34,7 +34,8 @@ class _WakatiState extends State<WakatiClock> {
           child: Text("Set to 4"),
           color: Colors.red,
           onPressed: () => provider.number = 4,
-        )
+        ),
+        Text("the time is $hour:$minute:${provider.second}")
       ],
     ));
   }

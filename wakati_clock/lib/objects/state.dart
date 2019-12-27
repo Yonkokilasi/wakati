@@ -17,7 +17,7 @@ class StateModel with ChangeNotifier {
   get number => _minute;
 
   set second(DateTime dateTime) {
-    //print("********** updating seconds to $_second");
+    print("********** updating seconds to $_second");
     _second = DateFormat('ss').format(dateTime);
     notifyListeners();
   }

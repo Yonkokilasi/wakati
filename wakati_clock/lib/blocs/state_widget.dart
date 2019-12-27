@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakati_clock/objects/state.dart';
+import 'package:wakelock/wakelock.dart';
 
 class StateWidget extends StatefulWidget {
   final StateModel state;
@@ -24,6 +25,9 @@ class StateWidgetState extends State<StateWidget> {
   @override
   void dispose() {
     state.dispose();
+
+    // remove wake lock
+    Wakelock.disable();
     super.dispose();
   }
 
@@ -36,6 +40,9 @@ class StateWidgetState extends State<StateWidget> {
       DeviceOrientation.landscapeLeft,
       DeviceOrientation.landscapeRight,
     ]);
+
+    // keep device awake
+    Wakelock.enable();
     if (widget.state != null) {
       state = widget.state;
     } else {

@@ -42,7 +42,7 @@ class _WakatiState extends State<WakatiClock> {
   }
 
   // returns the background image based on the current weather condition
-  String _getBackgroundImage() {
+  String get _getBackgroundImage {
     var currentWeather = _sampleData.weatherCondition;
     switch (currentWeather) {
       case WeatherCondition.sunny:
@@ -79,7 +79,7 @@ class _WakatiState extends State<WakatiClock> {
       height: deviceHeight,
       decoration: BoxDecoration(
           image: DecorationImage(
-              image: AssetImage(_getBackgroundImage()), fit: BoxFit.cover)),
+              image: AssetImage(_getBackgroundImage), fit: BoxFit.cover)),
       child: Stack(
         children: <Widget>[
           Center(
@@ -105,13 +105,20 @@ class _WakatiState extends State<WakatiClock> {
           opacity: 0.6,
           child: Container(
             width: 90,
-            height: 90,
+            height: 105,
             color: Colors.white,
-            child: Column(
-              children: <Widget>[
-                Text("$today"),
-                Text("$dayOfTheWeek"),
-              ],
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: <Widget>[
+                  Text("$today",
+                      style:
+                          TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+                  Text("$dayOfTheWeek",
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                ],
+              ),
             ),
           ),
         ),
@@ -125,21 +132,33 @@ class _WakatiState extends State<WakatiClock> {
       right: 0,
       child: Container(
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
-          child: Text("$_currentLocation"),
+          padding: const EdgeInsets.only(bottom: 15, right: 15),
+          child: Text(
+            "$_currentLocation",
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          ),
         ),
       ),
     );
   }
 
   Widget _buildWeatherSection(double deviceWidth, double deviceHeight) {
+    var formattedTemp = _temparature.truncate();
     return Positioned(
       bottom: 0,
-      child: Container(
-        width: deviceWidth / 4,
-        height: deviceHeight / 6,
-        child: Column(
-          children: <Widget>[Text("$_temparature"), Text(" Probably feels like ${_temparature + 4}")],
+      child: Padding(
+        padding: const EdgeInsets.only(left: 15, bottom: 15),
+        child: Container(
+          width: deviceWidth / 4,
+          child: Column(
+            children: <Widget>[
+              Text(
+                "$formattedTemp",
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50),
+              ),
+              Text("Probably feels like ${formattedTemp + 4}")
+            ],
+          ),
         ),
       ),
     );
@@ -151,9 +170,9 @@ class _WakatiState extends State<WakatiClock> {
         bottom: 0,
         child: ClipRRect(
           child: Opacity(
-            opacity: 0.4,
+            opacity: 0.6,
             child: Container(
-              height: deviceHeight / 6,
+              height: deviceHeight / 4,
               width: deviceWidth,
               color: Colors.white,
             ),

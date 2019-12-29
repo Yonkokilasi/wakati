@@ -7,3 +7,4 @@ const String rainyBackground2 = 'assets/images/walking.png';
 const String nightBackground = 'assets/images/nightCloudyBackground.png';
 const String primaryFont = 'MeriendaOne';
 const String secondaryFont = 'UbuntuMono';
+const String weatherPrefix = 'Probably feels like';

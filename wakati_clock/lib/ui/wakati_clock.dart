@@ -44,23 +44,19 @@ class _WakatiState extends State<WakatiClock> {
   // returns the background image based on the current weather condition
   String get _getBackgroundImage {
     var currentWeather = _sampleData.weatherCondition;
+    var result = sunnyBackground;
     switch (currentWeather) {
       case WeatherCondition.sunny:
-        return sunnyBackground;
-      case WeatherCondition.cloudy:
-        // TODO: Handle this case.
+        result = sunnyBackground;
         break;
-      case WeatherCondition.foggy:
-        // TODO: Handle this case.
+      case WeatherCondition.cloudy:
+        result = nightBackground;
         break;
       case WeatherCondition.rainy:
-        // TODO: Handle this case.
-        break;
-      case WeatherCondition.snowy:
-        // TODO: Handle this case.
+        result = rainyBackground2;
         break;
       case WeatherCondition.thunderstorm:
-        // TODO: Handle this case.
+        result = rainyBackground2;
         break;
       case WeatherCondition.windy:
         return windyBackground;
@@ -68,12 +64,14 @@ class _WakatiState extends State<WakatiClock> {
       default:
         return sunnyBackground;
     }
+    return result;
   }
 
   @override
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
     var deviceHeight = MediaQuery.of(context).size.height;
+    var _currentTime = _formattedTime != null ? _formattedTime : 'now';
     return Container(
       width: deviceWidth,
       height: deviceHeight,
@@ -83,7 +81,10 @@ class _WakatiState extends State<WakatiClock> {
       child: Stack(
         children: <Widget>[
           Center(
-            child: Text("$_formattedTime"),
+            child: Text(
+              "$_currentTime",
+              style: TextStyle(fontSize: 50, fontFamily: primaryFont),
+            ),
           ),
           _buildDateSection(),
           _buildBottomContainer(deviceHeight, deviceWidth),
@@ -95,8 +96,9 @@ class _WakatiState extends State<WakatiClock> {
   }
 
   Positioned _buildDateSection() {
-    var today = DateFormat.E().format(_theTimeNow);
-    var dayOfTheWeek = DateFormat.d().format(_theTimeNow);
+    var today = _theTimeNow != null ? DateFormat.E().format(_theTimeNow) : '';
+    var dayOfTheWeek =
+        _theTimeNow != null ? DateFormat.d().format(_theTimeNow) : 'Today';
     return Positioned(
       right: 0,
       child: ClipRRect(
@@ -104,19 +106,22 @@ class _WakatiState extends State<WakatiClock> {
         child: Opacity(
           opacity: 0.6,
           child: Container(
-            width: 90,
-            height: 105,
+            height: 125,
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: <Widget>[
                   Text("$today",
-                      style:
-                          TextStyle(fontSize: 35, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 35,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: secondaryFont)),
                   Text("$dayOfTheWeek",
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.bold)),
+                      style: TextStyle(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          fontFamily: primaryFont)),
                 ],
               ),
             ),
@@ -135,7 +140,10 @@ class _WakatiState extends State<WakatiClock> {
           padding: const EdgeInsets.only(bottom: 15, right: 15),
           child: Text(
             "$_currentLocation",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                fontFamily: primaryFont),
           ),
         ),
       ),
@@ -147,16 +155,25 @@ class _WakatiState extends State<WakatiClock> {
     return Positioned(
       bottom: 0,
       child: Padding(
-        padding: const EdgeInsets.only(left: 15, bottom: 15),
+        padding: const EdgeInsets.only(left: 5, bottom: 15),
         child: Container(
-          width: deviceWidth / 4,
+          width: deviceWidth / 3,
           child: Column(
             children: <Widget>[
               Text(
                 "$formattedTemp",
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 50),
+                style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 35,
+                    fontFamily: primaryFont),
               ),
-              Text("Probably feels like ${formattedTemp + 4}")
+              Text(
+                "$weatherPrefix ${formattedTemp + 4}",
+                style: TextStyle(
+                    fontSize: 16,
+                    fontFamily: secondaryFont,
+                    fontWeight: FontWeight.w700),
+              )
             ],
           ),
         ),

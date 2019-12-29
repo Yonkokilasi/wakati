@@ -25,7 +25,7 @@ class _WakatiState extends State<WakatiClock> {
   void initState() {
     super.initState();
     _theTimeNow = new DateTime.now();
-    _timer = new Timer.periodic(const Duration(seconds: 1), setTime);
+    _timer = new Timer.periodic(const Duration(minutes: 1), setTime);
   }
 
   void setTime(Timer timer) {

@@ -1,7 +1,6 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-
 import 'package:flutter_clock_helper/model.dart';
 import 'package:intl/intl.dart';
 import 'package:wakati_clock/utils/strings.dart';
@@ -10,28 +9,54 @@ class WakatiClock extends StatefulWidget {
   const WakatiClock(this.model);
 
   final ClockModel model;
+
   _WakatiState createState() => _WakatiState();
 }
 
 class _WakatiState extends State<WakatiClock> {
   Timer _timer;
   DateTime _theTimeNow;
-  String _formattedTime;
-  static ClockModel _sampleData = ClockModel();
-  String _currentLocation = _sampleData.location;
-  num _temparature = _sampleData.temperature;
+  String _formattedHour = "";
+  String _formattedMinute = "";
+  static ClockModel _sampleData;
+  String _currentLocation;
+
+  num _temparature;
+
   var minute;
+
   @override
   void initState() {
     super.initState();
+    widget.model.addListener(_updateModel);
+    _updateModel();
+    _sampleData = ClockModel();
+    _temparature = _sampleData.temperature;
+    _currentLocation = _sampleData.location;
     _theTimeNow = new DateTime.now();
-    _timer = new Timer.periodic(const Duration(minutes: 1), setTime);
+    _timer = new Timer.periodic(const Duration(seconds: 1), setTime);
+  }
+
+  @override
+  void didUpdateWidget(WakatiClock oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (widget.model != oldWidget.model) {
+      oldWidget.model.removeListener(_updateModel);
+      widget.model.addListener(_updateModel);
+    }
   }
 
   void setTime(Timer timer) {
     setState(() {
       _theTimeNow = new DateTime.now();
-      _formattedTime = DateFormat.jm().format(_theTimeNow);
+      _formattedHour = DateFormat.H().format(_theTimeNow);
+      _formattedMinute = DateFormat.m().format(_theTimeNow);
+    });
+  }
+
+  void _updateModel() {
+    setState(() {
+      // Cause the clock to rebuild when the model changes.
     });
   }
 
@@ -47,16 +72,16 @@ class _WakatiState extends State<WakatiClock> {
     var result = sunnyBackground;
     switch (currentWeather) {
       case WeatherCondition.sunny:
-        result = sunnyBackground;
+        result = windyBackground;
         break;
       case WeatherCondition.cloudy:
         result = nightBackground;
         break;
       case WeatherCondition.rainy:
-        result = rainyBackground2;
+        result = rainyBackground;
         break;
       case WeatherCondition.thunderstorm:
-        result = rainyBackground2;
+        result = rainyBackground;
         break;
       case WeatherCondition.windy:
         return windyBackground;
@@ -71,25 +96,45 @@ class _WakatiState extends State<WakatiClock> {
   Widget build(BuildContext context) {
     var deviceWidth = MediaQuery.of(context).size.width;
     var deviceHeight = MediaQuery.of(context).size.height;
-    var _currentTime = _formattedTime != null ? _formattedTime : 'now';
+
     return Container(
       width: deviceWidth,
       height: deviceHeight,
+
+      // background image
       decoration: BoxDecoration(
           image: DecorationImage(
               image: AssetImage(_getBackgroundImage), fit: BoxFit.cover)),
       child: Stack(
         children: <Widget>[
-          Center(
-            child: Text(
-              "$_currentTime",
-              style: TextStyle(fontSize: 50, fontFamily: primaryFont),
-            ),
-          ),
+          _buildTimeWidget(),
           _buildDateSection(),
           _buildBottomContainer(deviceHeight, deviceWidth),
           _buildWeatherSection(deviceWidth, deviceHeight),
           _buildLocationSection(),
+        ],
+      ),
+    );
+  }
+
+  Center _buildTimeWidget() {
+    return Center(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Text(
+            "$_formattedHour",
+            style: TextStyle(fontSize: 100, fontFamily: primaryFont),
+          ),
+          Text(
+            ":",
+            style: TextStyle(fontSize: 50, fontFamily: primaryFont),
+          ),
+          Text(
+            "$_formattedMinute",
+            style: TextStyle(fontSize: 50, fontFamily: primaryFont),
+          ),
         ],
       ),
     );
@@ -187,7 +232,7 @@ class _WakatiState extends State<WakatiClock> {
         bottom: 0,
         child: ClipRRect(
           child: Opacity(
-            opacity: 0.6,
+            opacity: 0.3,
             child: Container(
               height: deviceHeight / 4,
               width: deviceWidth,

@@ -151,7 +151,7 @@ class _WakatiState extends State<WakatiClock> {
         child: Opacity(
           opacity: 0.6,
           child: Container(
-            height: 125,
+            height: 110,
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(8.0),
@@ -205,15 +205,27 @@ class _WakatiState extends State<WakatiClock> {
           width: deviceWidth / 3,
           child: Column(
             children: <Widget>[
-              Text(
-                "$formattedTemp",
-                style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 35,
-                    fontFamily: primaryFont),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "$formattedTemp",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 35,
+                        fontFamily: primaryFont),
+                  ),
+                  Text(
+                    "°C",
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 15,
+                        fontFamily: primaryFont),
+                  )
+                ],
               ),
               Text(
-                "$weatherPrefix ${formattedTemp + 4}",
+                "$weatherPrefix ${formattedTemp + 4} °C",
                 style: TextStyle(
                     fontSize: 16,
                     fontFamily: secondaryFont,

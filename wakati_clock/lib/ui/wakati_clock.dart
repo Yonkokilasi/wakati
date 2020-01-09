@@ -50,7 +50,14 @@ class _WakatiState extends State<WakatiClock> {
     setState(() {
       _theTimeNow = new DateTime.now();
       _formattedHour = DateFormat.H().format(_theTimeNow);
-      _formattedMinute = DateFormat.m().format(_theTimeNow);
+      var minute = int.parse(DateFormat.m().format(_theTimeNow));
+
+      // add 0 when $minute are below 10 for example 09
+      if (minute < 10) {
+        _formattedMinute = "0$minute";
+      } else {
+        _formattedMinute = "$minute";
+      }
     });
   }
 

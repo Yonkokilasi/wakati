@@ -154,21 +154,28 @@ class _AnalogClockState extends State<AnalogClock> {
                 isMinute: false,
                 angleRadians: _now.second * radiansPerTick,
               ),
-              // DrawnHand(
-              //   color: customTheme.highlightColor,
-              //   thickness: 42,
-              //   size: 0.9,
-              //   isMinute: true,
-              //   angleRadians: _now.minute * radiansPerTick,
+              DrawnHand(
+                color: customTheme.highlightColor,
+                thickness: 12,
+                size: 0.9,
+                isMinute: false,
+                angleRadians: _now.minute * radiansPerTick,
+              ),
+              // Transform.translate(
+              //   offset: getOffset(_now.second * radiansPerTick, 0.1),
+              //   child: DrawnHand(
+              //     color: customTheme.highlightColor,
+              //     thickness: 42,
+              //     size: 0.2,
+              //     isMinute: true,
+              //     angleRadians: _now.second * radiansPerTick,
+              //   ),
               // ),
               Transform.translate(
-                offset: getOffset(_now.second * radiansPerTick,0),
-                child: DrawnHand(
-                  color: customTheme.highlightColor,
-                  thickness: 42,
-                  size: 0.2,
-                  isMinute: true,
-                  angleRadians: _now.second * radiansPerTick,
+                offset: getOffset(_now.minute * radiansPerTick, 0.1),
+                child: new CustomPaint(
+                  painter: new MinuteHandPainter(
+                      minutes: _now.second, seconds: _now.second),
                 ),
               ),
               // Example of a hand drawn with [Container].
@@ -180,7 +187,7 @@ class _AnalogClockState extends State<AnalogClock> {
                 child: Transform.translate(
                   offset: Offset(0.0, -60.0),
                   child: Container(
-                    width: 22,
+                    width: 32,
                     height: 150,
                     decoration: BoxDecoration(
                       color: customTheme.primaryColor,
@@ -189,7 +196,7 @@ class _AnalogClockState extends State<AnalogClock> {
                 ),
               ),
               Transform.translate(
-                  offset: getOffset(_now.minute * radiansPerTick,0.9),
+                  offset: getOffset(_now.minute * radiansPerTick, 1),
                   child: Text("${_now.minute}")),
 
               Positioned(
@@ -207,13 +214,13 @@ class _AnalogClockState extends State<AnalogClock> {
     );
   }
 
-  Offset getOffset(double angleRadians,double modifier) {
-    var size = Size(536.8, 300.7);
+  Offset getOffset(double angleRadians, double modifier) {
+    var size = Size(536.8, 326.7);
     final center = (Offset.zero & size).center;
     final angle = angleRadians - math.pi / 2.0;
-    
+
     final length = size.shortestSide * 0.5 * modifier;
-    
+
     final position = center + Offset(math.cos(angle), math.sin(angle)) * length;
     return position;
   }

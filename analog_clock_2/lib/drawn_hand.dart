@@ -4,6 +4,7 @@
 
 import 'dart:math' as math;
 import 'dart:math';
+import 'package:vector_math/vector_math_64.dart' show radians;
 
 import 'package:angles/angles.dart';
 import 'package:flutter/material.dart';
@@ -86,15 +87,18 @@ class HandPainter extends CustomPainter {
     final angle = angleRadians - math.pi / 2.0;
     final length = size.shortestSide * 0.5 * handSize;
     position = center + Offset(math.cos(angle), math.sin(angle)) * length;
-    
+
     if (isMinute) {
-      Offset centerPoint = Offset(100, 0);
+      // draw triangle
+      Offset centerPoint = Offset(110, -25);
       double triangleA = 165; // this the dimension of triangle's side
-      double triangleR = triangleA /sqrt(3); // this the distance between the center of triangle/circle to corner of triangle
-    
+      double triangleR = triangleA /
+          sqrt(
+              3); // this the distance between the center of triangle/circle to corner of triangle
+
       Path path = Path();
 
-      double x1Point = position.dx + triangleR * cos(3 * pi / 2);
+      double x1Point = centerPoint.dx + triangleR * cos(3 * pi / 2);
       double y1Point = centerPoint.dy + triangleR * sin(3 * pi / 2);
       path.moveTo(x1Point, y1Point);
 
@@ -108,9 +112,9 @@ class HandPainter extends CustomPainter {
 
       // top angle
       double x3Point = centerPoint.dx +
-          triangleR * cos((3 * pi / 2) + Angle.fromDegrees(120).radians);
+          triangleR * cos((3 * pi / 2) + Angle.fromDegrees(12).radians);
       double y3Point = centerPoint.dy +
-          triangleR * sin((3 * pi / 2) + Angle.fromDegrees(120).radians);
+          triangleR * sin((3 * pi / 2) + Angle.fromDegrees(30).radians);
       path.lineTo(x3Point, y3Point);
 
       path.close();
@@ -124,11 +128,13 @@ class HandPainter extends CustomPainter {
       canvas.save();
       canvas.restore();
     } else {
+      // draw lines
       final linePaint = Paint()
         ..color = color
         ..strokeWidth = lineWidth
         ..strokeCap = StrokeCap.square;
-
+      // print("************center $center");
+      // print("************position $position");
       canvas.drawLine(center, position, linePaint);
     }
   }
@@ -183,5 +189,82 @@ class TrianglePainter extends CustomPainter {
     return oldDelegate.strokeColor != strokeColor ||
         oldDelegate.paintingStyle != paintingStyle ||
         oldDelegate.strokeWidth != strokeWidth;
+  }
+}
+
+class MinuteHandPainter extends CustomPainter {
+  final Paint minuteHandPaint;
+  int minutes;
+  int seconds;
+
+  MinuteHandPainter({this.minutes, this.seconds})
+      : minuteHandPaint = new Paint() {
+    minuteHandPaint.color = const Color(0xFF333333);
+    minuteHandPaint.style = PaintingStyle.fill;
+  }
+  
+  Path getTrianglePath(double x, double y) {
+    return Path()
+      ..moveTo(0, y)
+      ..lineTo(x / 2, 0)
+      ..lineTo(x, y)
+      ..lineTo(0, y);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final radius = size.width / 2;
+    canvas.save();
+    final radiansPerTick = radians(360 / 60);
+    
+    // We want to start at the top, not at the x-axis, so add pi/2.
+    var angleRadians = minutes * radiansPerTick;
+    final angle = angleRadians - math.pi * 2.0;
+    canvas.translate(radius, radius);
+
+    //canvas.rotate(2 * math.pi * ((this.minutes + (this.seconds / 60)) / 60));
+    canvas.rotate(angle);
+    Offset centerPoint = Offset(55, 55);
+    double triangleA = 165; // this the dimension of triangle's side
+    double triangleR = triangleA /
+        sqrt(
+            3); // this the distance between the center of triangle/circle to corner of triangle
+
+    Path path = getTrianglePath(25, 170);
+    // path.moveTo(-1.5, -radius-10.0);
+    // path.lineTo(-5.0, -radius/1.8);
+    // path.lineTo(-2.0, 10.0);
+    // path.lineTo(2.0, 10.0);
+    // path.lineTo(5.0, -radius/1.8);
+    // path.lineTo(1.5, -radius-10.0);
+    // double x1Point = centerPoint.dx + triangleR * cos(3 * pi / 2);
+    // double y1Point = centerPoint.dy + triangleR * sin(3 * pi / 2);
+    // path.moveTo(x1Point, y1Point);
+
+    // // left angle
+    // double x2Point = centerPoint.dx +
+    //     triangleR * cos((3 * pi / 2) - Angle.fromDegrees(120).radians);
+    // // right angle
+    // double y2Point = centerPoint.dy +
+    //     triangleR * sin((3 * pi / 2) - Angle.fromDegrees(120).radians);
+    // path.lineTo(x2Point, y2Point);
+
+    // // top angle
+    // double x3Point = centerPoint.dx +
+    //     triangleR * cos((3 * pi / 2) + Angle.fromDegrees(12).radians);
+    // double y3Point = centerPoint.dy +
+    //     triangleR * sin((3 * pi / 2) + Angle.fromDegrees(30).radians);
+    // path.lineTo(x3Point, y3Point);
+    path.close();
+
+    canvas.drawPath(path, minuteHandPaint);
+    //canvas.drawShadow(path, Colors.black, 4.0, false);
+
+    canvas.restore();
+  }
+
+  @override
+  bool shouldRepaint(MinuteHandPainter oldDelegate) {
+    return true;
   }
 }

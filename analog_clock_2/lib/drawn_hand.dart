@@ -202,7 +202,7 @@ class MinuteHandPainter extends CustomPainter {
     minuteHandPaint.color = const Color(0xFF333333);
     minuteHandPaint.style = PaintingStyle.fill;
   }
-  
+
   Path getTrianglePath(double x, double y) {
     return Path()
       ..moveTo(0, y)
@@ -216,7 +216,7 @@ class MinuteHandPainter extends CustomPainter {
     final radius = size.width / 2;
     canvas.save();
     final radiansPerTick = radians(360 / 60);
-    
+
     // We want to start at the top, not at the x-axis, so add pi/2.
     var angleRadians = minutes * radiansPerTick;
     final angle = angleRadians - math.pi * 2.0;
@@ -224,13 +224,15 @@ class MinuteHandPainter extends CustomPainter {
 
     //canvas.rotate(2 * math.pi * ((this.minutes + (this.seconds / 60)) / 60));
     canvas.rotate(angle);
-    Offset centerPoint = Offset(55, 55);
+    Offset centerPoint = Offset(5, 55);
     double triangleA = 165; // this the dimension of triangle's side
     double triangleR = triangleA /
         sqrt(
             3); // this the distance between the center of triangle/circle to corner of triangle
 
+    /// Draws a proper triangle
     Path path = getTrianglePath(25, 170);
+    //Path path = new Path();
     // path.moveTo(-1.5, -radius-10.0);
     // path.lineTo(-5.0, -radius/1.8);
     // path.lineTo(-2.0, 10.0);
@@ -251,9 +253,9 @@ class MinuteHandPainter extends CustomPainter {
 
     // // top angle
     // double x3Point = centerPoint.dx +
-    //     triangleR * cos((3 * pi / 2) + Angle.fromDegrees(12).radians);
+    //     triangleR * cos((3 * pi / 2) + Angle.fromDegrees(20).radians);
     // double y3Point = centerPoint.dy +
-    //     triangleR * sin((3 * pi / 2) + Angle.fromDegrees(30).radians);
+    //     triangleR * sin((3 * pi / 2) + Angle.fromDegrees(40).radians);
     // path.lineTo(x3Point, y3Point);
     path.close();
 

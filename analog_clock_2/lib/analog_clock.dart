@@ -46,6 +46,7 @@ class _AnalogClockState extends State<AnalogClock> {
   void initState() {
     super.initState();
     widget.model.addListener(_updateModel);
+   
     // lock orientation to landscape
     SystemChrome.setPreferredOrientations([
       DeviceOrientation.landscapeLeft,
@@ -172,7 +173,7 @@ class _AnalogClockState extends State<AnalogClock> {
               //   ),
               // ),
               Transform.translate(
-                offset: getOffset(_now.minute * radiansPerTick, 0.1),
+                offset: getOffset(_now.second * radiansPerTick, 0.1),
                 child: new CustomPaint(
                   painter: new MinuteHandPainter(
                       minutes: _now.second, seconds: _now.second),

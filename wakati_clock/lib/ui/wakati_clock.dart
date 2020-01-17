@@ -20,11 +20,10 @@ class _WakatiState extends State<WakatiClock> {
   String _formattedMinute = "";
   static ClockModel _sampleData;
   String _currentLocation;
-
+  var _condition;
+  var _unitString;
   num _temparature;
-
   var minute;
-
   @override
   void initState() {
     super.initState();
@@ -35,6 +34,14 @@ class _WakatiState extends State<WakatiClock> {
     _currentLocation = _sampleData.location;
     _theTimeNow = new DateTime.now();
     _timer = new Timer.periodic(const Duration(seconds: 1), setTime);
+  }
+
+  @override
+  void dispose() {
+    _timer.cancel();
+    widget.model.removeListener(_updateModel);
+    widget.model.dispose();
+    super.dispose();
   }
 
   @override
@@ -61,25 +68,26 @@ class _WakatiState extends State<WakatiClock> {
     });
   }
 
+  // Cause the clock to rebuild when the model changes.
   void _updateModel() {
     setState(() {
-      // Cause the clock to rebuild when the model changes.
+      _temparature = widget.model.temperature;
+      _condition = widget.model.weatherCondition;
+      _currentLocation = widget.model.location;
+      _unitString = widget.model.unitString;
     });
-  }
-
-  @override
-  void dispose() {
-    _timer.cancel();
-    super.dispose();
   }
 
   // returns the background image based on the current weather condition
   String get _getBackgroundImage {
-    var currentWeather = _sampleData.weatherCondition;
-    var result = sunnyBackground;
-    switch (currentWeather) {
+    var result;
+    var isLightmode =
+        Theme.of(context).brightness == Brightness.light ? true : false;
+
+    result = sunnyBackground;
+    switch (_condition) {
       case WeatherCondition.sunny:
-        result = windyBackground;
+        result = isLightmode ? sunnyBackground : nightBackground;
         break;
       case WeatherCondition.cloudy:
         result = nightBackground;
@@ -91,11 +99,16 @@ class _WakatiState extends State<WakatiClock> {
         result = rainyBackground;
         break;
       case WeatherCondition.windy:
-        return windyBackground;
+        result = isLightmode ? windyBackground : nightBackground2;
         break;
+      case WeatherCondition.snowy:
+        return nightBackground2;
+        break;
+
       default:
-        return sunnyBackground;
+        return sunnyBackground2;
     }
+
     return result;
   }
 
@@ -147,6 +160,12 @@ class _WakatiState extends State<WakatiClock> {
     );
   }
 
+  Color getColor() {
+    return Theme.of(context).brightness == Brightness.light
+        ? Colors.white
+        : Colors.black;
+  }
+
   Positioned _buildDateSection() {
     var today = _theTimeNow != null ? DateFormat.E().format(_theTimeNow) : '';
     var dayOfTheWeek =
@@ -156,10 +175,10 @@ class _WakatiState extends State<WakatiClock> {
       child: ClipRRect(
         borderRadius: BorderRadius.circular(4.0),
         child: Opacity(
-          opacity: 0.6,
+          opacity: 0.7,
           child: Container(
             height: 110,
-            color: Colors.white,
+            color: getColor(),
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -223,7 +242,7 @@ class _WakatiState extends State<WakatiClock> {
                         fontFamily: primaryFont),
                   ),
                   Text(
-                    "°C",
+                    "$_unitString",
                     style: TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -232,7 +251,7 @@ class _WakatiState extends State<WakatiClock> {
                 ],
               ),
               Text(
-                "$weatherPrefix ${formattedTemp + 4} °C",
+                "$weatherPrefix ${formattedTemp + 4} $_unitString",
                 style: TextStyle(
                     fontSize: 16,
                     fontFamily: secondaryFont,
@@ -251,11 +270,11 @@ class _WakatiState extends State<WakatiClock> {
         bottom: 0,
         child: ClipRRect(
           child: Opacity(
-            opacity: 0.3,
+            opacity: 0.4,
             child: Container(
               height: deviceHeight / 4,
               width: deviceWidth,
-              color: Colors.white,
+              color: getColor(),
             ),
           ),
         ));

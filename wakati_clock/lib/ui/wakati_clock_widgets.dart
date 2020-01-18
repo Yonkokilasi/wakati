@@ -99,7 +99,7 @@ Widget buildWeatherSection(
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 Padding(
-                  padding: const EdgeInsets.only(left: 10),
+                  padding: const EdgeInsets.only(left: 5),
                   child: Text(
                     "$formattedTemp",
                     style: TextStyle(
@@ -120,7 +120,7 @@ Widget buildWeatherSection(
             Text(
               "$weatherPrefix ${formattedTemp + 4} $unitString",
               style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 14,
                   fontFamily: secondaryFont,
                   fontWeight: FontWeight.w700),
             )

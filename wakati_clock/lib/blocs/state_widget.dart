@@ -1,14 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart';
-import 'package:wakati_clock/objects/state.dart';
 import 'package:wakelock/wakelock.dart';
 
 class StateWidget extends StatefulWidget {
-  final StateModel state;
   final Widget child;
 
-  StateWidget({@required this.child, this.state});
+  StateWidget({@required this.child});
 
   static StateWidgetState of(BuildContext context) {
     return (context
@@ -21,11 +18,8 @@ class StateWidget extends StatefulWidget {
 }
 
 class StateWidgetState extends State<StateWidget> {
-  StateModel state;
   @override
   void dispose() {
-    state.dispose();
-
     // remove wake lock
     Wakelock.disable();
     super.dispose();
@@ -41,23 +35,17 @@ class StateWidgetState extends State<StateWidget> {
       DeviceOrientation.landscapeRight,
     ]);
 
+    // set to full screen mode
+    SystemChrome.setEnabledSystemUIOverlays([]);
     // keep device awake
     Wakelock.enable();
-    if (widget.state != null) {
-      state = widget.state;
-    } else {
-      state = new StateModel();
-    }
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<StateModel>(
-      create: (BuildContext context) => StateModel(),
-      child: new _StateDataWidget(
-        data: this,
-        child: widget.child,
-      ),
+    return new _StateDataWidget(
+      data: this,
+      child: widget.child,
     );
   }
 }

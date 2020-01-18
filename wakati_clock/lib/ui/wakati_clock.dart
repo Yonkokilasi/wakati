@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_clock_helper/model.dart';
 import 'package:intl/intl.dart';
+import 'package:wakati_clock/ui/wakati_clock_widgets.dart';
 import 'package:wakati_clock/utils/strings.dart';
 
 class WakatiClock extends StatefulWidget {
@@ -24,6 +25,7 @@ class _WakatiState extends State<WakatiClock> {
   var _unitString;
   num _temparature;
   var minute;
+
   @override
   void initState() {
     super.initState();
@@ -78,7 +80,7 @@ class _WakatiState extends State<WakatiClock> {
     });
   }
 
-  // returns the background image based on the current weather condition
+  // returns the background image based on the current weather condition and the theme mode
   String get _getBackgroundImage {
     var result;
     var isLightmode =
@@ -90,7 +92,7 @@ class _WakatiState extends State<WakatiClock> {
         result = isLightmode ? sunnyBackground : nightBackground;
         break;
       case WeatherCondition.cloudy:
-        result = nightBackground;
+        result = isLightmode ? cloudyBackground : nightCloudyBackground;
         break;
       case WeatherCondition.rainy:
         result = rainyBackground;
@@ -99,14 +101,13 @@ class _WakatiState extends State<WakatiClock> {
         result = rainyBackground;
         break;
       case WeatherCondition.windy:
-        result = isLightmode ? windyBackground : nightBackground2;
+        result = isLightmode ? neutralBackground : nightCloudyBackground;
         break;
-      case WeatherCondition.snowy:
-        return nightBackground2;
+      case WeatherCondition.foggy:
+        result = foggyBackground;
         break;
-
       default:
-        return sunnyBackground2;
+        return neutralBackground;
     }
 
     return result;
@@ -117,166 +118,33 @@ class _WakatiState extends State<WakatiClock> {
     var deviceWidth = MediaQuery.of(context).size.width;
     var deviceHeight = MediaQuery.of(context).size.height;
 
-    return Container(
-      width: deviceWidth,
-      height: deviceHeight,
+    return SafeArea(
+      child: Container(
+        width: deviceWidth,
+        height: deviceHeight,
 
-      // background image
-      decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage(_getBackgroundImage), fit: BoxFit.cover)),
-      child: Stack(
-        children: <Widget>[
-          _buildTimeWidget(),
-          _buildDateSection(),
-          _buildBottomContainer(deviceHeight, deviceWidth),
-          _buildWeatherSection(deviceWidth, deviceHeight),
-          _buildLocationSection(),
-        ],
+        // background image
+        decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(_getBackgroundImage), fit: BoxFit.cover)),
+        child: Stack(
+          children: <Widget>[
+            buildTimeWidget(_formattedHour, _formattedMinute),
+            buildDateSection(_theTimeNow, getColor()),
+            buildBottomContainer(deviceHeight, deviceWidth, getColor()),
+            buildWeatherSection(
+                deviceWidth, deviceHeight, _temparature, _unitString),
+            buildLocationSection(_currentLocation),
+          ],
+        ),
       ),
     );
   }
 
-  Center _buildTimeWidget() {
-    return Center(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: <Widget>[
-          Text(
-            "$_formattedHour",
-            style: TextStyle(fontSize: 100, fontFamily: primaryFont),
-          ),
-          Text(
-            ":",
-            style: TextStyle(fontSize: 50, fontFamily: primaryFont),
-          ),
-          Text(
-            "$_formattedMinute",
-            style: TextStyle(fontSize: 50, fontFamily: primaryFont),
-          ),
-        ],
-      ),
-    );
-  }
-
+  // Used to return a color based on the theme mode
   Color getColor() {
     return Theme.of(context).brightness == Brightness.light
         ? Colors.white
         : Colors.black;
-  }
-
-  Positioned _buildDateSection() {
-    var today = _theTimeNow != null ? DateFormat.E().format(_theTimeNow) : '';
-    var dayOfTheWeek =
-        _theTimeNow != null ? DateFormat.d().format(_theTimeNow) : 'Today';
-    return Positioned(
-      right: 0,
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(4.0),
-        child: Opacity(
-          opacity: 0.7,
-          child: Container(
-            height: 110,
-            color: getColor(),
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                children: <Widget>[
-                  Text("$today",
-                      style: TextStyle(
-                          fontSize: 35,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: secondaryFont)),
-                  Text("$dayOfTheWeek",
-                      style: TextStyle(
-                          fontSize: 30,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: primaryFont)),
-                ],
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildLocationSection() {
-    return Positioned(
-      bottom: 0,
-      right: 0,
-      child: Container(
-        child: Padding(
-          padding: const EdgeInsets.only(bottom: 15, right: 15),
-          child: Text(
-            "$_currentLocation",
-            style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-                fontFamily: primaryFont),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildWeatherSection(double deviceWidth, double deviceHeight) {
-    var formattedTemp = _temparature.truncate();
-    return Positioned(
-      bottom: 0,
-      child: Padding(
-        padding: const EdgeInsets.only(left: 5, bottom: 15),
-        child: Container(
-          width: deviceWidth / 3,
-          child: Column(
-            children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    "$formattedTemp",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 35,
-                        fontFamily: primaryFont),
-                  ),
-                  Text(
-                    "$_unitString",
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
-                        fontFamily: primaryFont),
-                  )
-                ],
-              ),
-              Text(
-                "$weatherPrefix ${formattedTemp + 4} $_unitString",
-                style: TextStyle(
-                    fontSize: 16,
-                    fontFamily: secondaryFont,
-                    fontWeight: FontWeight.w700),
-              )
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // Background for bottom items
-  Widget _buildBottomContainer(double deviceHeight, double deviceWidth) {
-    return Positioned(
-        bottom: 0,
-        child: ClipRRect(
-          child: Opacity(
-            opacity: 0.4,
-            child: Container(
-              height: deviceHeight / 4,
-              width: deviceWidth,
-              color: getColor(),
-            ),
-          ),
-        ));
   }
 }
